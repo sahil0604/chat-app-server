@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"net"
+	"log"
 	"net/http"
+	"os"
 	"video-chat-app/server"
 )
 
@@ -11,13 +12,17 @@ func main() {
 	server.AllRooms.Init()
 	http.HandleFunc("/create", server.CreateRoomRequestHandler)
 	http.HandleFunc("/join", server.JoinRoomRequestHandler)
+	var port = envPortOr("3000")
 
-	listener, err := net.Listen("tcp", ":0")
-	if err != nil {
-		panic(err)
+	fmt.Println("Using port:", port)
+	log.Fatal(http.ListenAndServe(port, nil))
+}
+
+func envPortOr(port string) string {
+	// If `PORT` variable in environment exists, return it
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		return ":" + envPort
 	}
-
-	fmt.Println("Using port:", listener.Addr().(*net.TCPAddr).Port)
-
-	panic(http.Serve(listener, nil))
+	// Otherwise, return the value of `port` variable from function argument
+	return ":" + port
 }
