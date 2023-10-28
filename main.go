@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"net"
 	"net/http"
 	"video-chat-app/server"
 )
@@ -11,9 +12,12 @@ func main() {
 	http.HandleFunc("/create", server.CreateRoomRequestHandler)
 	http.HandleFunc("/join", server.JoinRoomRequestHandler)
 
-	log.Println("Starting Server on  8000")
-	err := http.ListenAndServe(":8000", nil)
+	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
+
+	fmt.Println("Using port:", listener.Addr().(*net.TCPAddr).Port)
+
+	panic(http.Serve(listener, nil))
 }
