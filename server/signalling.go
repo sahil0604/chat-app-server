@@ -37,7 +37,7 @@ type broadcastMsg struct {
 
 var broadcast = make(chan broadcastMsg)
 
-func broadcaster() {
+func Broadcaster() {
 	for {
 		msg := <-broadcast
 		for _, client := range AllRooms.Map[msg.RoomID] {
@@ -49,7 +49,7 @@ func broadcaster() {
 					client.Conn.Close()
 				}
 			}
-			client.Mutex.Unlock() // Unlock the mutex after the write operation
+			client.Mutex.Unlock()
 		}
 	}
 }
@@ -69,8 +69,6 @@ func JoinRoomRequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	AllRooms.InsertIntoRoom(roomID[0], false, ws)
-
-	go broadcaster()
 
 	for {
 		var msg broadcastMsg

@@ -14,6 +14,8 @@ func main() {
 	http.HandleFunc("/join", server.JoinRoomRequestHandler)
 	var port = envPortOr("3000")
 
+	go server.Broadcaster()
+
 	fmt.Println("Using port:", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
