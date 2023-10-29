@@ -11,8 +11,9 @@ import (
 
 // participant describes a single entity in the hashMap
 type Participant struct {
-	Host bool
-	Conn *websocket.Conn
+	Host  bool
+	Conn  *websocket.Conn
+	Mutex sync.RWMutex
 }
 
 // RoomMap is the main hashMao [roomID string] -> participant
