@@ -44,12 +44,12 @@ func broadcaster() {
 			client.Mutex.Lock()
 			if client.Conn != msg.Client {
 				err := client.Conn.WriteJSON(msg.Message)
-				client.Mutex.Unlock()
 				if err != nil {
 					log.Fatal(err, "line 48 err")
 					client.Conn.Close()
 				}
 			}
+			client.Mutex.Unlock() // Unlock the mutex after the write operation
 		}
 	}
 }
