@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -38,12 +39,14 @@ type broadcastMsg struct {
 var broadcast = make(chan broadcastMsg)
 
 func broadcaster() {
+	var w sync.RWMutex
 	for {
 		msg := <-broadcast
 		for _, client := range AllRooms.Map[msg.RoomID] {
 			if client.Conn != msg.Client {
+				w.Lock()
 				err := client.Conn.WriteJSON(msg.Message)
-
+				w.Unlock()
 				if err != nil {
 					log.Fatal(err, "line 48 err")
 					client.Conn.Close()
